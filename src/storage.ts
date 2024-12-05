@@ -264,14 +264,19 @@ const COOKIE_PERSISTED_PROPERTIES = [
 
 export const localPlusCookieStore: PersistentStore = {
     ...localStore,
-    parse: function (name) {
+    parse: function (name, prioritizeCookie) {
         try {
             let cookieProperties: Properties = {}
             try {
                 // See if there's a cookie stored with data.
                 cookieProperties = cookieStore.parse(name) || {}
             } catch {}
-            const value = extend(cookieProperties, JSON.parse(localStore.get(name) || '{}'))
+            let value: Record<string, any>
+            if (prioritizeCookie) {
+                value = extend(JSON.parse(localStore.get(name) || '{}'), cookieProperties)
+            } else {
+                value = extend(cookieProperties, JSON.parse(localStore.get(name) || '{}'))
+            }
             localStore.set(name, value)
             return value
         } catch {

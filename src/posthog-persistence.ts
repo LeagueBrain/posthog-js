@@ -123,7 +123,7 @@ export class PostHogPersistence {
             return
         }
 
-        const entry = this.storage.parse(this.name)
+        const entry = this.storage.parse(this.name, this.config.prioritize_cookie)
 
         if (entry) {
             this.props = extend({}, entry)

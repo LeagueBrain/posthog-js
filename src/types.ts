@@ -338,6 +338,11 @@ export interface PostHogConfig {
      * whether to wrap fetch and add tracing headers to the request
      * */
     __add_tracing_headers?: boolean
+
+    /** Always load from persistant storage before capturing events */
+    load_before_capture?: boolean
+    /** Prioritize entries stored in cookie when merging with data stored in localStorage if using `'localStorage+cookie'` `persistance` option @default false */
+    prioritize_cookie?: boolean
 }
 
 export interface OptInOutCapturingOptions {
@@ -541,7 +546,7 @@ export type FeatureFlagsCallback = (
 export interface PersistentStore {
     is_supported: () => boolean
     error: (error: any) => void
-    parse: (name: string) => any
+    parse: (name: string, prioritizeCookie?: boolean) => any
     get: (name: string) => any
     set: (
         name: string,

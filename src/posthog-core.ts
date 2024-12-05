@@ -185,6 +185,8 @@ export const defaultConfig = (): PostHogConfig => ({
     person_profiles: 'identified_only',
     __add_tracing_headers: false,
     before_send: undefined,
+    load_before_capture: false,
+    prioritize_cookie: false,
 })
 
 export const configRenames = (origConfig: Partial<PostHogConfig>): Partial<PostHogConfig> => {
@@ -806,6 +808,10 @@ export class PostHog {
         if (!this.__loaded || !this.persistence || !this.sessionPersistence || !this._requestQueue) {
             logger.uninitializedWarning('posthog.capture')
             return
+        }
+
+        if (this.config.load_before_capture) {
+            this.persistence.load()
         }
 
         if (this.consent.isOptedOut()) {
